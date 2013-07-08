@@ -1,6 +1,6 @@
 {
   "name": "simple-cas-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A basic simple NodeJS Client for communicating with Central Authentication Service (CAS) servers.",
   "main": "simple-cas-client.js",
   "engines" : { "node" : ">=0.10.0" },

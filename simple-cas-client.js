@@ -24,7 +24,7 @@ var  http   = require('http')
                 context:   null
             },
             initiating_url: null,
-            callback_url:  null
+            callback_url:   null
         };
 
         this.configure = function( config )

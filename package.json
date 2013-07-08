@@ -1,0 +1,28 @@
+{
+  "name": "simple-cas-client",
+  "version": "0.0.1",
+  "description": "A basic simple NodeJS Client for communicating with Central Authentication Service (CAS) servers.",
+  "main": "simple-cas-client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctacorp/simple-cas-client.git"
+  },
+  "keywords": [
+    "Node",
+    "NodeJS",
+    "CAS",
+    "OMBMax",
+    "Authentication",
+    "Central Authentication Service"
+  ],
+  "author": "dnarkiewicz@ctacorp.com",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "ee5f86b2a726e6fde2da40dce19808dcdc6ede0e",
+  "bugs": {
+    "url": "https://github.com/ctacorp/simple-cas-client/issues"
+  }
+}

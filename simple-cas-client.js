@@ -14,14 +14,15 @@ var  http   = require('http')
         this.config = {
             session_space: 'simpleCAS',
             client: {
-                prefix: null,
-                host:   null,
-                port:   null
+                protocol: null,
+                host:     null,
+                port:     null
             },
             server: {
-                host:      null,
-                port:      null,
-                context:   null
+                protocol: null,
+                host:     null,
+                port:     null,
+                context:  null
             },
             initiating_url: null,
             callback_url:   null
@@ -97,7 +98,7 @@ var  http   = require('http')
                 return false;
             }
             if ( ! ( this.config.session_space in req.session
-                  && req.session[this.config.session_space] ) ) 
+                  && req.session[this.config.session_space] ) )
             {
                 return false;
             }
@@ -112,7 +113,7 @@ var  http   = require('http')
         this.getInitiatingUrl = function( req )
         {
             var host = '';
-            /// directly defined 
+            /// directly defined
             if ( this.config.initiating_url ) {
                 return this.config.initiating_url;
             }
@@ -120,8 +121,11 @@ var  http   = require('http')
             var initiating_url = '';
             if ( this.config.client.host ) {
                 initiating_url = this.config.client.host;
-                if ( this.config.client.prefix ) {
-                    initiating_url = this.config.client.prefix + initiating_url;
+                if ( this.config.client.protocol ) {
+                    initiating_url = this.config.client.protocol + '://' + initiating_url;
+                }
+                if ( this.config.client.port ) {
+                  initiating_url += ':'+this.config.client.port;
                 }
                 return initiating_url + req.url;
             }
@@ -149,41 +153,52 @@ var  http   = require('http')
         this.redirectToCASLogin = function ( req,res )
         {
             var callback_url = this.getCallbackUrl(req);
-            var port = '';
-            var protocol = 'https://';
-            if ( this.config.server.port == '80' ) {
-                protocol = 'http://';
-            } else if ( this.config.port && this.config.server.port != '443' ) {
+            var port     = '443';
+            var protocol = 'https';
+            if ( 'protocol' in this.config.server && this.config.server.protocol )
+            {
+                  protocol = this.config.server.protocol;
+            }
+            if ( 'port' in this.config.server && this.config.server.port )
+            {
                 port = ':'+this.config.server.port;
             }
             var return_url  = '?service='+ encodeURIComponent(callback_url);
-            var redirect_to = protocol + this.config.server.host + port
+            var redirect_to = protocol + '://' + this.config.server.host + port
                             + this.config.server.context + '/login' + return_url;
             res.redirect( redirect_to );
         };
         this.redirectToCASLogout = function ( req,res )
         {
             var callback_url = this.getCallbackUrl(req);
-            var port = '';
-            var protocol = 'https://';
-            if ( this.config.server.port == '80' ) {
-                protocol = 'http://';
-            } else if ( this.config.port && this.config.server.port != '443' ) {
+            var port     = '443';
+            var protocol = 'https';
+            if ( 'protocol' in this.config.server && this.config.server.protocol )
+            {
+                  protocol = this.config.server.protocol;
+            }
+            if ( 'port' in this.config.server && this.config.server.port )
+            {
                 port = ':'+this.config.server.port;
             }
             var return_url  = '?service='+ encodeURIComponent(callback_url);
-            var redirect_to = protocol + this.config.server.host + port
+            var redirect_to = protocol + '://' + this.config.server.host + port
                             + this.config.server.context + '/logout' + return_url;
             res.redirect( redirect_to );
         };
         this.redirectHereWithoutTicket = function( req,res )
         {
-            var here_without_ticket = this.uniqueUrl( this.urlWithoutTicket( this.getInitiatingUrl(req) ) ); 
+            var here_without_ticket = this.uniqueUrl( this.urlWithoutTicket( this.getInitiatingUrl(req) ) );
             res.redirect( here_without_ticket );
         };
         this.validateTicket = function ( req,res, ticket, next )
         {
-            var requestor = ( this.config.server.port == '80' ) ? http : https;
+            var requestor = https;
+            if (  ( 'protocol' in this.config.server   && this.config.server.protocol=='http' )
+            || ( !( 'protocol' in this.config.server ) && this.config.server.port=='80' ) )
+            {
+                  requestor = http;
+            }
             var service = encodeURIComponent( this.urlWithoutTicket( this.getInitiatingUrl(req) ) );
             var _this = this;
             var validation_request = requestor.get({

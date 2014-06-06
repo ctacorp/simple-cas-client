@@ -21,11 +21,12 @@ This is intended to be used be the in the login page of your node application.
         cas.configure({
             session_space: 'cas',
             client: {
-                prefix: 'http://',
-                host:   '127.0.0.1:3000',
-                port:   null
+                protocol: 'http',
+                host:     '127.0.0.1',
+                port:     3000
             },
             server: {
+                protocol: 'https',
                 host:    'some.cas.server.com',
                 port:    '443',
                 context: '/cas'
@@ -60,4 +61,5 @@ This is intended to be used be the in the login page of your node application.
             res.redirect('/tryagain');
         });
 
+        /// trigger the authentication check and redirect process
         cas.forceAuthentication(req,res);
